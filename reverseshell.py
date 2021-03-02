@@ -9,7 +9,7 @@ import time
 username = "youraccount@gmail.com"
 password = "************"
 
-# your account to view the mail
+# your account to view the mail sent from python
 your_mail = 'yourmail@gmail.com'
 
 def clean(text):
