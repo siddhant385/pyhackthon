@@ -1,10 +1,14 @@
 <p align="center">
   <img src="text.gif"></img>
 </p>
+<p align="center">
+  <img src="https://en.bloggif.com/tmp/c3f7d50fc8613ccef198e46416ae1139/text.gif?1636810701"></img>
+ </p>
 
-
- <h1 align='center'> ONLY FOR WINDOWS!
- </h1>
+ <h1 align='center'> ONLY FOR WINDOWS!</h1>
+ <p align="center">
+  <img src="https://blog.finxter.com/wp-content/uploads/2020/07/reverseshell-1024x576.jpg"></img>
+ </p>
  
  
 -----
