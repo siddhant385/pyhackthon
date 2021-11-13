@@ -4,17 +4,24 @@
 
 
 # ONLY FOR WINDOWS!
-- REQUIRES PYTHON 3
-- REVERSE SHELL IN PYTHON
+-----
+# FEATURES
+- FUD
+- PERSISTENCE
+- REVERSE SHELL
+-----
+# UPCOMING FEATURES
+- ENCRYPTED FOR BETTER AV EVASION
+- AUTOMATION FOR INSTALLATION
 -----
 # REQUIREMENTS:
++ Python3
 + imaplib
 + email
 + os
 + smtplib 
 + subprocess
 + TIME
-
 -------
 
 # SETUP AND INSTALLATION
@@ -30,12 +37,13 @@
 + NOW SEND CMD COMMANDS TO EXECUTE
 + SEND EXIT COMMAND FOR EXITING 
 + HAVE A NICE HACKING
+----------
+
+# WAIT FOR THE NEW FEATURES
 
 ### Disclaimer :
 Usage of this tool for attacking targets without prior mutual consent is illegal. It's the end user's responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program.
 
-
-# NEW UPDATE FOR STARTUP WILL COME SOON 
 
 ### ❤️Supporters❤️
 [![Stargazers repo roster for @siddhant385/pyhackthon](https://reporoster.com/stars/siddhant385/pyhackthon)](https://github.com/siddhant385/pyhackthon/stargazers)
