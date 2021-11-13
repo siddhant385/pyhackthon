@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://github.com/siddhant385/pyhackthon/blob/main/text.gif"></img>
+</p>
+
 # PYHACKTHON
 
 
