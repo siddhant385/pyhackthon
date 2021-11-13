@@ -29,6 +29,8 @@
 + smtplib 
 + subprocess
 + TIME
++ winhell
++ shutil
 -------
 
 # SETUP AND INSTALLATION
