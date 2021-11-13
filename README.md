@@ -3,7 +3,8 @@
 </p>
 
 
-# ONLY FOR WINDOWS!
+ <h1 align='center'> ONLY FOR WINDOWS!
+  </h1>
 -----
 # FEATURES
 - FUD
