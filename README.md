@@ -7,7 +7,7 @@
 -----
 # FEATURES
 - FUD
-- PERSISTENCE
+- PERSISTENCE (without admin rights)
 - REVERSE SHELL
 -----
 # UPCOMING FEATURES
