@@ -29,7 +29,7 @@
 + smtplib 
 + subprocess
 + TIME
-+ winhell
++ winshell
 + shutil
 -------
 
