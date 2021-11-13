@@ -8,12 +8,12 @@
 # REVERSE SHELL FOR PYTHON
 
 # REQUIREMENTS
--imaplib
--email
--os
--smtplib 
--subprocess
--TIME
+--imaplib
+--email
+--os
+--smtplib 
+--subprocess
+--TIME
 
 
 # SETUP AND INSTALLATION
