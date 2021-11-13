@@ -2,8 +2,6 @@
   <img src="https://github.com/siddhant385/pyhackthon/blob/main/text.gif"></img>
 </p>
 
-# PYHACKTHON
-
 
 # ONLY FOR WINDOWS!
 # REQUIRES PYTHON 3
