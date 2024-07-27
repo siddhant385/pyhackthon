@@ -31,7 +31,7 @@
 
 1. 🍴 **Clone This Repository**: Fork it, clone it, whatever you need to do. Just get it.
 2. 📦 **Install The Requirements**: Dependencies, am I right?
-3. ✉️ **Create A New Gmail Account**: Write its credentials in the `.py` file on `USERNAME` and `PASSWORD`. No, not your personal email, you silly goose.
+3. ✉️ **Create A New Gmail Account**: Write its credentials in the `reverseshell.py` file on `USERNAME` and `PASSWORD`. No, not your personal email, you silly goose.
 4. 🔓 **Enable Less Secured App**: Because we like living dangerously.
 5. 📧 **Enter Your Email Account**: For viewing the results and for sending commands to `YOUR_MAIL`.
 6. 🛠 **Convert It To Executable (EXE)**: PyInstaller is your friend.
