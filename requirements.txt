@@ -1,1 +1,4 @@
-winshell
+requests
+mss
+psutil
+py-cpuinfo

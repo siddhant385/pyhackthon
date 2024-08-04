@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="text.gif"></img>
+  <img src="GIFS/text.gif"></img>
 </p>
 <p align="center">
   <img src="GIFS/REVERSESHELL.gif"></img>
 </p>
 
-<h1 align='center'> ONLY FOR WINDOWS! 🎉</h1>
+<h1 align='center'> VERSION 2.00 🎉</h1>
 <p align="center">
   <img src="https://blog.finxter.com/wp-content/uploads/2020/07/reverseshell-1024x576.jpg"></img>
 </p>
@@ -15,6 +15,10 @@
 - 🕵️‍♂️ **FUD**: Fully Undetectable, because who likes being caught?
 - 🔄 **PERSISTENCE**: Sneakily stays put without admin rights. Shhh... 🤫
 - 🐚 **REVERSE SHELL**: Because sometimes, you need to be in two places at once.
+- 📸 **SCREENSHOT**: Let me see your Screen, and I’ll capture your best side!
+- 📤 **FILE UPLOAD**: Sending files like a pro, without leaving a trace. 📦
+- 📥 **FILE DOWNLOAD**: Bringing files to you, no strings attached. 📂
+
 
 -----
 # 🔮 UPCOMING FEATURES 🔮
@@ -23,7 +27,10 @@
 
 -----
 # 🛠 REQUIREMENTS 🛠
-- `winshell`: Only if you need a startup boost 🚀
+- `requests`: Because you need a little help asking for stuff 🤔
+- `mss`: For when you need to capture that “aha!” moment 📸
+- `psutil`: : Your victim system’s personal trainer 🏋️
+- `py-cpuinfo`:  Know your CPU like you know your favorite coffee ☕
 
 -----
 
@@ -31,7 +38,7 @@
 
 1. 🍴 **Clone This Repository**: Fork it, clone it, whatever you need to do. Just get it.
 2. 📦 **Install The Requirements**: Dependencies, am I right?
-3. ✉️ **Create A New Gmail Account**: Write its credentials in the `reverseshell.py` file on `USERNAME` and `PASSWORD`. No, not your personal email, you silly goose.
+3. ✉️ **Create A New Gmail Account**: Write its credentials in the `gmail.py` file on `USERNAME` and `PASSWORD`. No, not your personal email, you silly goose.
 4. 🔓 **Enable Less Secured App**: Because we like living dangerously.
 5. 📧 **Enter Your Email Account**: For viewing the results and for sending commands to `YOUR_MAIL`.
 6. 🛠 **Convert It To Executable (EXE)**: PyInstaller is your friend.
