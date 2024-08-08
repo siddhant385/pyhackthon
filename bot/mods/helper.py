@@ -1,13 +1,43 @@
 import importlib
 
+class download:
+    def __init__(self):
+        self.name = "download"
+        self.info = "Downloads a file from Given Url and Executes It(Not plain text file only bytes)"
+        self.args = ["Url: Url To Download","Name: Name to Save the file","Bool: True of False to run after execution"]
+        self.command = ":download,Url,Name,Bool"
 
-from mods.screenshot import screenshot
-from mods.systeminfo import systeminfo
-from bot.mods.download import urlDownload
-from bot.mods.upload import UrlUploader
-from mods.wifi import WifiPasswordRetriever
+class screenshot:
+    def __init__(self):
+        self.info = "📸 Snaps a pic of the screen and sends it over like 💨"
+        self.name = "screenshot"
+        self.args = []
+        self.isCrossPlatfrom = True
+        self.command = ":screenshot"
 
-from externals.templates import helper_template
+class systeminfo:
+    def __init__(self):
+        self.name = "systeminfo"
+        self.info = "Gives Basic System Information of File"
+        self.args = []
+        self.command = ":systeminfo"
+
+
+class upload:
+    def __init__(self):
+        self.name = "UrlUploader"
+        self.info = "Uploads a file from Given Path to Gmail or an Api (if file greater than 25MB)"
+        self.args = ["Path: Path from victim to download file"]
+        self.command = ":upload,[Path]"
+
+class wifi:
+    def __init__(self):
+        self.name = "Wifi"
+        self.info = "Retrieves Saved Wifi Passwords"
+        self.args = []
+        self.command = ":wifi"
+
+
 class Helper:
     def __init__(self):
         self.info = ""
@@ -36,7 +66,7 @@ class Helper:
         )
         
 
-        listOfClasses = [screenshot, systeminfo, urlDownload, UrlUploader, WifiPasswordRetriever]
+        listOfClasses = [screenshot, systeminfo, download, upload, wifi]
         for classes in listOfClasses:
             Class = classes()
             args_info = ""

