@@ -44,7 +44,7 @@ class helper:
         self.info = ""
     
 
-    def helper_template(help_content):
+    def helper_template(self,help_content):
         html_content = f"""
     <!DOCTYPE html>
     <html lang="en">
@@ -157,7 +157,7 @@ class helper:
             )
 
 
-        return helper_template(self.info)
+        return self.helper_template(self.info)
     
     def run(self,EmailHandler,msgId):
         EmailHandler.send_email(
