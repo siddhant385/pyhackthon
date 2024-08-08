@@ -148,7 +148,7 @@ class systeminfo:
 
         return "\n".join(info)
     
-    def run(self, msgId, EmailHandler):
+    def run(self,EmailHandler,msgId):
         system_info = self.get_system_info()
         installed_software = self.get_installed_software()
         html_content = systeminfo_template(system_info, installed_software)

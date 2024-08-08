@@ -4,7 +4,7 @@ import os
 
 
 
-class UrlUploader:
+class upload:
     def __init__(self):
         self.name = "UrlUploader"
         self.info = "Uploads a file from Given Path to Gmail or an Api (if file greater than 25MB)"

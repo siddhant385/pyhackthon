@@ -1,6 +1,6 @@
 import subprocess
 
-class WifiPasswordRetriever:
+class wifi:
     def __init__(self):
         self.name = "Wifi"
         self.info = "Retrieves Saved Wifi Passwords"

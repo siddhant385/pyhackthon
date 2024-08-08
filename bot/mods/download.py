@@ -6,7 +6,7 @@ import subprocess
 import platform
 
 
-class urlDownload:
+class download:
     def __init__(self):
         self.name = "urlDownload"
         self.info = "Downloads a file from Given Url and Executes It(Not plain text file only bytes)"
