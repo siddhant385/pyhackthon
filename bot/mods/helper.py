@@ -38,7 +38,7 @@ class wifi:
         self.command = ":wifi"
 
 
-class Helper:
+class helper:
     def __init__(self):
         self.info = ""
 
