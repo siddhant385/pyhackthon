@@ -14,7 +14,7 @@ from email.mime.base import MIMEBase
 from email.header import decode_header
 
 # Externals
-from externals.templates import create_html_content, shell,systeminfo_template,helper_template
+from externals.templates import create_html_content, shell
 from externals.useless import basic_systeminfo
 
 class EmailHandler:
