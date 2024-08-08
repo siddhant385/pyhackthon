@@ -131,9 +131,9 @@ class helper:
 
     def helpfunctions(self):
         self.info += self.smallHelpTemplate(
-            heading="Help",
+            heading="Helper",
             info="Gives a helping hand Know about tool better",
-            command=":help",
+            command=":helper",
             args_info="<p><strong>args1:</strong> No arguments</p>"
         )
         

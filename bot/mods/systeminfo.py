@@ -13,6 +13,85 @@ class systeminfo:
         self.args = []
         self.command = ":systeminfo"
 
+    def systeminfo_template(self,system_info, installed_software):
+        html_content = f"""
+        <html>
+        <head>
+            <style>
+                body {{
+                    font-family: 'Courier New', Courier, monospace;
+                    background-color: #1e1e1e;
+                    color: #ffffff;
+                    padding: 20px;
+                }}
+                .container {{
+                    width: 90%;
+                    margin: 0 auto;
+                }}
+                .header {{
+                    color: #00ff00;
+                    font-size: 24px;
+                    margin-bottom: 20px;
+                }}
+                .section {{
+                    margin-bottom: 20px;
+                }}
+                .section-title {{
+                    color: #ff4500;
+                    font-size: 20px;
+                    border-bottom: 1px solid #3c3c3c;
+                    padding-bottom: 5px;
+                    margin-bottom: 10px;
+                }}
+                .section-content pre {{
+                    color: #FFFF99;
+                    background-color: #252526;
+                    padding: 10px;
+                    border-radius: 5px;
+                    white-space: pre-wrap;
+                    
+                }}
+                .installed-software ul {{
+                    list-style-type: none;
+                    padding: 0;
+                }}
+                .installed-software li {{
+                    background-color: #252526;
+                    margin: 5px 0;
+                    padding: 5px 10px;
+                    border-radius: 5px;
+                    color: #ffffff;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">System Information Report</div>
+                <div class="section">
+                    <div class="section-title">System Information</div>
+                    <div class="section-content">
+                    <pre>
+                    {system_info}
+                    </pre></div>
+                </div>
+                <div class="section">
+                    <div class="section-title">Installed Software</div>
+                    <div class="section-content installed-software">
+                        <ul>
+        """
+        for software in installed_software[:20]:
+            html_content += f"<li>{software}</li>"
+
+        html_content += """
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        return html_content
+
     def get_size(self, bytes, suffix="B"):
         factor = 1024
         for unit in ["", "K", "M", "G", "T", "P"]:
@@ -150,7 +229,7 @@ class systeminfo:
     def run(self,EmailHandler,msgId):
         system_info = self.get_system_info()
         installed_software = self.get_installed_software()
-        html_content = systeminfo_template(system_info, installed_software)
+        html_content = self.systeminfo_template(system_info, installed_software)
         EmailHandler.send_email(
             message=html_content,
             msgId=msgId,
