@@ -107,19 +107,22 @@ class systeminfo:
             try:
                 import winreg
                 def get_software_from_registry(hive, flag):
-                    registry = winreg.ConnectRegistry(None, hive)
-                    uninstall_key = winreg.OpenKey(registry, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", 0, winreg.KEY_READ | flag)
-                    count = winreg.QueryInfoKey(uninstall_key)[0]
-                    software_list = []
-                    for i in range(count):
-                        try:
-                            key_name = winreg.EnumKey(uninstall_key, i)
-                            software_key = winreg.OpenKey(uninstall_key, key_name)
-                            display_name = winreg.QueryValueEx(software_key, "DisplayName")[0]
-                            software_list.append(display_name)
-                        except WindowsError:
-                            continue
-                    return software_list
+                    try:
+                        registry = winreg.ConnectRegistry(None, hive)
+                        uninstall_key = winreg.OpenKey(registry, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", 0, winreg.KEY_READ | flag)
+                        count = winreg.QueryInfoKey(uninstall_key)[0]
+                        software_list = []
+                        for i in range(count):
+                            try:
+                                key_name = winreg.EnumKey(uninstall_key, i)
+                                software_key = winreg.OpenKey(uninstall_key, key_name)
+                                display_name = winreg.QueryValueEx(software_key, "DisplayName")[0]
+                                software_list.append(display_name)
+                            except WindowsError:
+                                continue
+                        return software_list
+                    except Exception as e:
+                        return e
 
                 installed_software = get_software_from_registry(winreg.HKEY_LOCAL_MACHINE, winreg.KEY_WOW64_32KEY)
                 installed_software += get_software_from_registry(winreg.HKEY_LOCAL_MACHINE, winreg.KEY_WOW64_64KEY)
